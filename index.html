@@ -1,0 +1,170 @@
+<head>
+    <title>KAROL KOŁODZIEJCZYK DANE UŻYTKOWNIKA</title>
+    <html lang="pl">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="./images/logo32.png">
+    <link rel="manifest" href="manifest.json"> 
+    <meta name="theme-color" content="#317EFB">
+    <link rel="apple-touch-icon" href="/images/logo32.png">
+<style>
+
+		body{
+			width:1024px;
+			height:1024px;
+		}
+		.obszar{
+            position: absolute;
+			border: 1px solid black;
+			background-color:cyan;
+			z-index: -2;
+		}
+		#punkt{
+			position:absolute; 
+			border: 1px solid black;
+			background-color:red;
+			z-index: -1;
+			width:4px;
+			height:4px;
+		}
+</style>	
+</head>
+ 
+<body>
+<header> Praca na ocenę 4 - Dane użytkownika </header>
+<form>
+X kwadrat<input type="number" min="0" max="1024" maxlength="4"  value="0" id="x"></input><br>
+Y kwadrat<input type="number" min="0" max="1024" maxlength="4" value="0" id="y"></input><br>
+Szerokość:<input type="number" value="1" id="a"></input><br>
+<input type="button" value="Dodaj kwadrat"  onclick="tworzKwadrat()"></input> 
+</form>
+<form>
+X punkt<input type="number" min="0" max="1024"  value="0" id="xp"></input><br>
+Y punkt<input type="number" min="0" max="1024" value="0" id="yp"></input><br>
+Prędkość x: <input type="number" value="0" id="kx"></input><br>
+Prędkość y: <input type="number"  value="0" id="ky"></input><br>
+<input type="button" value="Ustaw punkt" onclick="tworzPunkt()"></input> 
+</form>
+<span id="kwadraty"></span>
+<div id="punkt"><div> 
+
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register("serviceWorker.js").then(function () {
+            console.log('Service worker zainstalowany!')
+        }).catch(function (err) {
+            console.log('Service worker nie zostal zainstalowany! Sprawdz blad:', err)
+        });
+    }
+</script>
+<script>
+var pozycjax=0;
+var pozycjay=0;
+var pozycjax2=0;
+var pozycjay2=0;
+var rozmiar=0;
+var numer=0;
+var punkt=document.getElementById("punkt");
+var kx=0;
+var ky=0;
+var kierunekx=1;
+var kieruneky=1;
+var rozmiark=0;
+var euklides1=0;
+var euklides2=0;
+
+function tworzKwadrat(){
+	numer++;
+	var obraz = document.createElement("div");
+	obraz.className = "obszar";
+	obraz.id = "kwadrat"+numer;
+	document.body.appendChild(obraz);
+	pozycjax=document.getElementById("x").value;
+	pozycjay=document.getElementById("y").value;
+	rozmiar=document.getElementById("a").value;
+	console.log(pozycjax,pozycjay,rozmiar);
+	document.getElementById("kwadrat"+numer).style.width = rozmiar;
+	document.getElementById("kwadrat"+numer).style.height = rozmiar;
+	document.getElementById("kwadrat"+numer).style.top = pozycjay;
+	document.getElementById("kwadrat"+numer).style.left = pozycjax;
+	window['kwadrat'+numer]=new Array( "kwadrat"+numer, pozycjax, pozycjay, rozmiar);
+	liczodleglosc();
+	console.log(window['kwadrat'+numer]);
+}
+
+function liczodleglosc(){
+window['dystansxod'+numer]=pozycjax-pozycjax2;
+window['dystansyod'+numer]=pozycjay-pozycjay2;
+}
+
+function tworzPunkt() {
+	pozycjax2=document.getElementById("xp").value;
+	pozycjay2=document.getElementById("yp").value;
+	document.getElementById("punkt").style.top = pozycjay2;
+	document.getElementById("punkt").style.left = pozycjax2;
+	kx=document.getElementById("kx").value;
+	ky=document.getElementById("ky").value;
+}
+
+
+window.onload = () => setInterval(przesuwanie, 1000);
+
+function przesuwanie() {
+	document.getElementById("kwadraty").innerHTML="Obszary<br>";
+
+    if ((pozycjax2) >= 1024) {
+		pozycjax2=0;
+
+    } else if (pozycjax2 < 0) {
+		pozycjax2=1024;
+
+    }
+   if ((pozycjay2) >= 1024) {
+	   pozycjay2=0;
+
+		} else if (pozycjay2 < 0) {
+		pozycjay2=1024;
+
+		}
+
+    pozycjax2 =  Number(pozycjax2) +  (Number(kx)*kierunekx) ;
+    pozycjay2 = Number(pozycjay2) +  (Number(ky)*kieruneky) ;
+
+    punkt.style.left = pozycjax2  + `px`;
+    punkt.style.top = pozycjay2 + `px`;
+	console.log(pozycjax2 , pozycjay2);
+	
+	for(var i=1;numer>=i;i++){
+	window['dystansxod'+i]=window['kwadrat'+i][1]-pozycjax2;
+	window['dystansyod'+i]=window['kwadrat'+i][2]-pozycjay2;
+	console.log("Dystans x dla kwardatu" + i +":"+  window['dystansxod'+i] +" \n" );
+	console.log("Dystans y dla kwardatu" + i +":"+  window['dystansyod'+i]);
+	console.log("Szerokość dla kwadratu " + i +":"+ window['kwadrat'+numer][3] );
+	
+	console.log("Odległość eulidesowa"+Math.sqrt((window['kwadrat'+i][1]-pozycjay2)*(window['kwadrat'+i][1]-pozycjay2)+(pozycjax2-window['kwadrat'+i][2])*(pozycjax2-window['kwadrat'+i][2])));
+	
+	euklides1 = Math.sqrt((window['kwadrat'+i][1]-pozycjay2)*(window['kwadrat'+i][1]-pozycjay2)+(pozycjax2-window['kwadrat'+i][2])*(pozycjax2-window['kwadrat'+i][2]));
+	euklides2 = Math.sqrt((window['kwadrat'+i][1]- (pozycjay2+Number(ky)) )* ( window['kwadrat'+i][1]-(pozycjay2+Number(ky)))+((pozycjax2+Number(kx))-window['kwadrat'+i][2])*((pozycjax2+Number(kx))-window['kwadrat'+i][2]));
+		 
+	console.log(euklides1,euklides2)
+	
+	
+	if(window['dystansxod'+i]<=0 &&  window['dystansxod'+i]>=(window['kwadrat'+numer][3])*(-1) &&   window['dystansyod'+i]<=0 &&  window['dystansyod'+i]>= (window['kwadrat'+numer][3])*(-1)  ){
+		console.log("JEST W KWADRACIE"+i) ;
+		document.getElementById("kwadraty").innerHTML = document.getElementById("kwadraty").innerHTML + " \n Punkt jest w kwadracie " + i +"<br>";
+
+	}else 
+	if(euklides2>euklides1){
+		console.log("Oddala się od kwadratu "+i)
+		document.getElementById("kwadraty").innerHTML = document.getElementById("kwadraty").innerHTML + " \n Punkt oddala się od kwadratu" + i +"<br>";
+	}else if(euklides1!=euklides2){
+			console.log("Przybliża się do kwadratu "+i);
+			document.getElementById("kwadraty").innerHTML = document.getElementById("kwadraty").innerHTML + " \nPunkt zbliża się do kwadratu" + i +"<br>";
+
+	}
+	}
+	
+}
+
+</script>
+
+</body></html>
