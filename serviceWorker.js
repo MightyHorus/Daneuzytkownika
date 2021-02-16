@@ -5,7 +5,7 @@
  * @type {string} cacheName Nazwa obiektu cache.
  * @type {string} filesToCache Tablica zawierająca obiekty do scacheowania.
  */
-const cacheName = `Kule `;
+const cacheName = `Projekt końcowy PWA`;
 const filesToCache = [
     `./`,
     `index.html`
